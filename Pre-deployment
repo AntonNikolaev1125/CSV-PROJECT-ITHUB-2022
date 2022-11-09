@@ -11,29 +11,19 @@ class FWRule:
     ports: list[int]
     action: str
 
-    def __init__(self):
+def rules():
+    fw_rules = (list)
+    with open('fw_rules_v1.csv', 'r') as csvfile:
+        rows = csv.DictReader(csvfile, delimiter = ';')
+        for row in rows:
+            fw_rule = FWRule
+            fw_rule.src_address = row['src_address']
+            fw_rule.src_netmask = row['src_netmask']
+            fw_rule.dst_netmask = row['dst_netmask']
+            fw_rule.dst_address = row['dst_address']
+            fw_rule.ports = row['ports']
+            fw_rule.action = row['action']
+            print(fw_rule.src_address)
+    return
 
-        return
-
-
-def get_all():
-    with open(r'C:\Users\HORNET\Downloads\fw_rules_v1.csv', newline='') as csvfile:
-        list_of_my_rules = list()
-        for row in reader:
-            date_time_as_string = row['datetime_created']
-
-            rule = FWRule()
-            rule.datetime_created = datetime.datetime.fromisoformat(date_time_as_string)
-            rule.action = row['action']
-            list_of_my_rules.append(rule)
-
-    return list_of_my_rules
-
-def all_forbidden(get_all):
-    new_my_great_list = list()
-
-    for rule in all:
-        if rule.action == 'forbid':
-            new_my_great_list.append(rule)
-
-    return new_my_great_list
+rules()
