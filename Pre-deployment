@@ -13,7 +13,7 @@ class FWRule:
 
 def rules():
     fw_rules = (list)
-    with open('fw_rules_v1.csv', 'r') as csvfile:
+    with open('fw_rules_v3.csv', 'r') as csvfile:
         rows = csv.DictReader(csvfile, delimiter = ';')
         for row in rows:
             fw_rule = FWRule
@@ -24,6 +24,22 @@ def rules():
             fw_rule.ports = row['ports']
             fw_rule.action = row['action']
             print(fw_rule.src_address)
-    return
+    return fw_rules
 
-rules()
+def select_rules_with_ports(rules_from:list [FWRule]):,
+ports:list [int])
+selection=list()
+for rule in rules_form:
+    ports_from_rule=rule.get_ports()
+    for i in ports:
+        if i in ports_from_rule:
+selection.append(rule)
+break
+return selection
+def select_rules_permitted(rules_from:list[FWRule]):
+selection=list()
+for rule in rules from:
+    if rules in rules_from:
+        if rule.action=='permit':
+            selection.append(rule)
+            return selection
