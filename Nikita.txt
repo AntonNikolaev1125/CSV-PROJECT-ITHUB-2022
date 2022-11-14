@@ -1,0 +1,66 @@
+import csv
+import datetime
+import ipaddress
+
+
+class FWRule:  # Задает изначальный формат переменных
+    datetime_created: str
+    src_address: str
+    src_netmask: str
+    dst_address: str
+    dst_netmask: str
+    ports: str
+    action: str
+
+    # Не удалял т.к. мб еще пригодится, хотя хз зачем
+    # def get_src_addresses(self):
+    #     result_addresses = list()
+    #     for a in self.src_address:
+    #         result_addresses.append(int(a))
+    #         return result_addresses
+
+
+def get_rules_from_file(filename):  # Достает все из файла и заносит в список
+    fw_rules = list()
+    with open(filename, 'r') as csvfile:  # Открытие файла
+        rows = csv.DictReader(csvfile, delimiter=';')
+        for row in rows:
+            fw_rule = FWRule()
+            fw_rule.datetime_created = row['datetime_created']
+            fw_rule.src_address = row['src_address']
+            fw_rule.src_netmask = row['src_netmask']
+            fw_rule.dst_netmask = row['dst_netmask']
+            fw_rule.dst_address = row['dst_address']
+            fw_rule.ports = row['ports']
+            fw_rule.action = row['action']
+            fw_rules.append(fw_rule)
+    return fw_rules
+
+
+def get_network_address(rules_from: list[FWRule]):
+    list_of_networks = list()
+    for rule in rules_from:
+        # Определение сети для адреса и маски отправителя
+        src_interface_as_string = rule.src_address+'/'+rule.src_netmask
+        src_interface = ipaddress.IPv4Interface(src_interface_as_string)
+        src_network = src_interface.network
+
+        # Определение сети для адреса и маски получателя
+        # будет аналогично, только с dst
+
+        if not src_network in list_of_networks:
+            list_of_networks.append(src_network)
+
+        # То же и для dst_network
+
+    return list_of_networks
+
+
+# Тут вызываем функции по порядку:
+
+# Читаем из файла, пишем в переменную
+all = get_rules_from_file('fw_rules_v2.csv')
+
+# Вызываем вторую функцию и в аргумент передаем то, что вернула первая
+tmp = get_network_address(all)
+print(tmp)
